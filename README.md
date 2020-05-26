@@ -1,5 +1,29 @@
 
 
+
+# Quick Start
+
+```
+export NORDUSER="<user>"
+export NORDPASS="<pass>
+
+# to check environment variables are correct
+env
+
+./build-docker.sh
+docker-compose up -d
+
+# check if
+curl -vv -Lx localhost:8118 localhost:8080/secure
+
+# change vpn and restart vpn service
+curl -X PUT "http://localhost:8080/vpn/restart" \
+     -H "Content-Type: application/json" \
+     -d "{\"server\":\"us5426.nordvpn.com\"}"
+```
+Swagger docs http://localhost:8080/api/docs/
+
+
 # Getting Started
 
 Setup a python 3.8+ virtual env
