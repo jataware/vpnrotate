@@ -1,0 +1,22 @@
+name: Python package
+
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.8]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dev tools
+        working-directory: ./vpnrotate
+        run: pip install -r requirements-dev.txt
+      - name: Run Tox
+        working-directory: ./vpnrotate
+        run: tox

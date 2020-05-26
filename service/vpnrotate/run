@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+exec 2>&1
+
+sleep 1
+
+exec vpnrotate --resources=/etc/vpnrotate/resources
