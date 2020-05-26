@@ -26,8 +26,10 @@ async def secure(request):
             description: Return true|false
     """
     resp = await nordvpnapi.getSecure()
-    headers = {f"x-nordvpn-{k}":v for k,v in resp.items()}
-    return web.Response(text=str(resp.get("status", "") == "Protected").lower(), headers=headers)
+    headers = {f"x-nordvpn-{k}": v for k, v in resp.items()}
+    return web.Response(
+        text=str(resp.get("status", "") == "Protected").lower(), headers=headers
+    )
 
 
 async def countries(request):
