@@ -1,0 +1,30 @@
+#!/bin/sh
+
+if [ -n "$SERVER" -a -n "$PROTOCOL" ]; then
+  echo "Default: $SERVER_$PROTOCOL"
+  F="/etc/ovpn/configs/ovpn_$PROTOCOL/$SERVER.$PROTOCOL.ovpn"
+
+  if [ ! -f $F ]; then
+    echo "ERROR: default vpn file not found: $F"
+    exit 1
+  else
+    echo "set default vpn file: $F"
+    cp $F /etc/ovpn/openvpn.conf
+  fi
+
+else
+  echo "No default server has been set"
+  exit 1
+fi
+
+
+if [ -n "$USERNAME" -a -n "$PASSWORD" ]; then
+  echo "$USERNAME" > /etc/ovpn/auth.conf
+  echo "$PASSWORD" >> /etc/ovpn/auth.conf
+  chmod 600 /etc/ovpn/auth.conf
+else
+  echo "ERROR: No credentials available please set USERNAME and PASSWORD"
+  exit 1
+fi
+
+

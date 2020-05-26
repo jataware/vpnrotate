@@ -1,0 +1,2 @@
+include resources/*.yaml
+include README.md

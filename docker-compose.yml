@@ -1,0 +1,32 @@
+version: '3'
+services:
+  vpnproxy:
+    image: jataware/vpnproxy:dev
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    networks:
+      - default
+    environment:
+      - USERNAME=$NORDUSER
+      - PASSWORD=$NORDPASS
+      - SERVER=us4282.nordvpn.com
+      - LOCAL_NETWORK=192.168.1.0/24
+    volumes:
+      - ovpn_configs:/etc/ovpn/configs
+    ports:
+      - 8118:8118
+      - 8080:8080
+    restart: always
+
+volumes:
+  ovpn_configs:
+    driver: local
+    driver_opts:
+      type: volume
+      device: ${PWD}/nordvpn
+      o: bind
