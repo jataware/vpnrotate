@@ -29,5 +29,6 @@ RUN pip3 install /etc/vpnrotate
 EXPOSE 8118 8080
 
 COPY service /etc/service/
+VOLUME [ "/app/ovpn/config" ]
 
 CMD ["runsvdir", "/etc/service"]
