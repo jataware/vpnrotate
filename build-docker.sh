@@ -4,7 +4,7 @@
 if [ ! -d "nordvpn" ]; then
   mkdir nordvpn
   wget -q -O nordvpn/ovpn_tmp.zip https://downloads.nordcdn.com/configs/archives/servers/ovpn.zip
-  unzip -q nordvpn/ovpn_tmp.zip -d norovpn
+  unzip -q nordvpn/ovpn_tmp.zip -d nordvpn
   rm nordvpn/ovpn_tmp.zip
 fi
 
