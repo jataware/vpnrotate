@@ -14,7 +14,7 @@ services:
     environment:
       - USERNAME=$NORDUSER
       - PASSWORD=$NORDPASS
-      - SERVER=us4282.nordvpn.com
+      - SERVER=$SERVER
       - LOCAL_NETWORK=192.168.1.0/24
     volumes:
       - ovpn_configs:/etc/ovpn/configs

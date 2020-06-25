@@ -6,6 +6,7 @@
 ```
 export NORDUSER="<user>"
 export NORDPASS="<pass>
+export SERVER=us6053.nordvpn.com
 
 # to check environment variables are correct
 env
