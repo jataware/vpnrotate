@@ -5,7 +5,10 @@
 
 ```
 export NORDUSER="<user>"
-export NORDPASS="<pass>
+export NORDPASS="<pass>"
+export PIAUSER="<user>"
+export PIAPASS="<user>"
+
 export SERVER=us6053.nordvpn.com
 
 # to check environment variables are correct

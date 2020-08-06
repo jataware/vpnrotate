@@ -19,9 +19,21 @@ fi
 
 
 if [ -n "$USERNAME" -a -n "$PASSWORD" ]; then
+  echo "$USERNAME" > /etc/ovpn/nord.conf
+  echo "$PASSWORD" >> /etc/ovpn/nord.conf
   echo "$USERNAME" > /etc/ovpn/auth.conf
   echo "$PASSWORD" >> /etc/ovpn/auth.conf
+  chmod 600 /etc/ovpn/nord.conf
   chmod 600 /etc/ovpn/auth.conf
+else
+  echo "ERROR: No credentials available please set USERNAME and PASSWORD"
+  exit 1
+fi
+
+if [ -n "$PUSERNAME" -a -n "$PPASSWORD" ]; then
+  echo "$PUSERNAME" > /etc/ovpn/pia.conf
+  echo "$PPASSWORD" >> /etc/ovpn/pia.conf
+  chmod 600 /etc/ovpn/pia.conf
 else
   echo "ERROR: No credentials available please set USERNAME and PASSWORD"
   exit 1

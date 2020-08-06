@@ -39,6 +39,11 @@ async def changeVPNConfig(vpnconfigs: str, vpnconf: str, server: str):
             raise Exception(f"ovpn file not found {ovpn_file}")
         await os.remove(vpnconf)
         await file_copy(ovpn_file, vpnconf)
+        await os.remove("/etc/ovpn/auth.conf")
+        if 'nord' in server:
+            await file_copy("/etc/ovpn/nord.conf","/etc/ovpn/auth.conf")
+        else:
+            await file_copy("/etc/ovpn/pia.conf","/etc/ovpn/auth.conf")
 
 
 async def restartVPN():
