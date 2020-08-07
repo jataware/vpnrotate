@@ -33,10 +33,11 @@ async def file_copy(src: str, dest: str, buff_size: int = 4096):
 
 
 async def changeVPNConfig(vpnconfigs: str, vpnconf: str, server: str):
-    if 'nord' in server:
-        ovpn_file = f"{vpnconfigs}/ovpn_tcp/{server}.tcp.ovpn"
-    else:
+    ovpn_file = f"{vpnconfigs}/ovpn_tcp/{server}.tcp.ovpn"
+    
+    if 'nord' not in server:
         ovpn_file = f"{vpnconfigs}/ovpn_tcp/{server}.ovpn"
+    
     async with OVPN_LOCK:
         if not await file_exists(ovpn_file):
             raise Exception(f"ovpn file not found {ovpn_file}")
