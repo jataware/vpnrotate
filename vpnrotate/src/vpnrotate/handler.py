@@ -4,7 +4,6 @@ from aiohttp import web
 
 from . import __version__, nordvpnapi, svchandler
 
-
 """
 Swagger Help: https://swagger.io/docs/specification/describing-parameters/
 """
