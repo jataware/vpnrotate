@@ -22,7 +22,7 @@ services:
       - ovpn_configs:/etc/ovpn/configs
     ports:
       - 8118:8118
-      - 8080:8080
+      - 8880:8080
     restart: always
 
 volumes:
