@@ -8,7 +8,7 @@ if [ ! -d "nordvpn" ]; then
   rm nordvpn/ovpn_tmp.zip
 
   mkdir pia
-  wget -q -O pia/pia_tmp.zip https://www.privateinternetaccess.com/openvpn/openvpn-tcp-nextgen.zip
+  wget -q -O pia/pia_tmp.zip https://www.privateinternetaccess.com/openvpn/openvpn.zip
   unzip -q pia/pia_tmp.zip -d pia
   cp pia/* nordvpn/ovpn_tcp/
 fi
