@@ -14,7 +14,7 @@ if [ ! -d "nordvpn" ]; then
 
   mkdir wind
   wget -q -O wind/wind_tmp.zip TBD TBD TBD
-  unzip -q wind/wind_tmp.zip -d pia
+  unzip -q wind/wind_tmp.zip -d wind
   cp wind/* nordvpn/ovpn_tcp/
   rm wind/wind_tmp.zip
 fi
