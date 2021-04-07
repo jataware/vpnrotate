@@ -13,10 +13,11 @@ if [ ! -d "nordvpn" ]; then
   cp pia/* nordvpn/ovpn_tcp/
 
   mkdir wind
-  wget -q -O wind/wind_tmp.zip TBD TBD TBD
+  #wget -q -O pia/pia_tmp.zip https://NONE.FOUND.YET
+  cp wind_tmp.zip wind/wind_tmp.zip
   unzip -q wind/wind_tmp.zip -d wind
-  cp wind/* nordvpn/ovpn_tcp/
   rm wind/wind_tmp.zip
+  cp wind/* nordvpn/ovpn_tcp/
 fi
 
 DT=$(date +"%Y%m%d")
