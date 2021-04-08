@@ -152,10 +152,10 @@ async def vpns(request):
             description: return error
     """
     try:
-        DIR = "/etc/ovpn/configs/ovpn_tcp/"
+        vpn_env = request.app["CONFIG"]["vpn_env"]
+        DIR = f"{vpn_env['vpnconfig']}/ovpn_tcp"
         all_tcp_vpns = []
         for f in os.listdir(DIR):
-            print(f)
             try:
                 s = f.split(".tcp")
                 if "nord" in s[0]:
