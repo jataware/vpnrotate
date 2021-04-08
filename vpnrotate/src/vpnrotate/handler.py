@@ -1,10 +1,9 @@
 import os
+import pathlib
 import logging
 from logging import Logger
-import pathlib
 
 from time import perf_counter
-
 
 from aiohttp import web
 
