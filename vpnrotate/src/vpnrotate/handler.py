@@ -156,7 +156,10 @@ async def vpns(request):
             print(f)
             try:
                 s = f.split('.tcp')
-                all_tcp_vpns.append(s[0])
+                if 'nord' in s[0]:
+                    all_tcp_vpns.append(s[0])
+                else:
+                    all_tcp_vpns.append(s[0][:-5])
             except Exception as e:
                 print("error: " , e)
         return web.json_response({"vpns":all_tcp_vpns})
