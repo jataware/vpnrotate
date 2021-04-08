@@ -167,7 +167,7 @@ async def vpns(request):
                     all_tcp_vpns.append(s[0])
                 else:
                     all_tcp_vpns.append(pathlib.Path(s[0]).stem)
-            except Exception as e:
+            except Exception:
 
                 logger.exeception("error parsing filename")
         return web.json_response({"vpns": all_tcp_vpns})
