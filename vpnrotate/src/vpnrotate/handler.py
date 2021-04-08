@@ -1,5 +1,6 @@
-from time import perf_counter
 import os
+from time import perf_counter
+
 from aiohttp import web
 
 from . import __version__, nordvpnapi, svchandler
@@ -162,7 +163,7 @@ async def vpns(request):
                 else:
                     all_tcp_vpns.append(s[0][:-5])
             except Exception as e:
-                print("error: " , e)
+                print("error: ", e)
         return web.json_response({"vpns": all_tcp_vpns})
     except Exception as e:
         return web.Response(text=e)
