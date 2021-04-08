@@ -3,6 +3,7 @@ import os
 import pathlib
 from logging import Logger
 from time import perf_counter
+
 from aiohttp import web
 
 from . import __version__, nordvpnapi, svchandler
