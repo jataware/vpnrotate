@@ -4,6 +4,7 @@ from aiohttp import web
 
 from . import __version__, nordvpnapi, svchandler
 
+import os
 """
 Swagger Help: https://swagger.io/docs/specification/describing-parameters/
 """
@@ -136,6 +137,31 @@ async def healthcheck(request):
     """
     return web.Response(text="ok")
 
+async def vpns(request):
+    """
+    ---
+    summary: This end-point returns available vpn servers.
+    tags:
+    - VPN
+    responses:
+        "200":
+            description: Return "ok" text
+        "500":
+            description: return error
+    """
+    try:
+        DIR = '/etc/ovpn/configs/ovpn_tcp/'
+        all_tcp_vpns=[]
+        for f in os.listdir(DIR):
+            print(f)
+            try:
+                s = f.split('.tcp')
+                all_tcp_vpns.append(s[0])
+            except Exception as e:
+                print("error: " , e)
+        return web.json_response({"vpns":all_tcp_vpns})
+    except Exception as e:
+        return web.Response(text=e)
 
 def routing_table(app):
     return [
@@ -145,6 +171,7 @@ def routing_table(app):
         web.get("/secure", secure, allow_head=False),
         web.get("/countries", countries, allow_head=False),
         web.get("/recommend", recommend, allow_head=False),
+        web.get('/vpns', vpns, allow_head=False),
         web.put("/vpn/restart", restart_vpn),
     ]
 
