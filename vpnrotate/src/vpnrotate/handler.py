@@ -1,10 +1,13 @@
 import os
 from time import perf_counter
+import logging
+from logging import Logger
 
 from aiohttp import web
 
 from . import __version__, nordvpnapi, svchandler
 
+logger: Logger = logging.getLogger(__name__)
 
 """
 Swagger Help: https://swagger.io/docs/specification/describing-parameters/
@@ -153,7 +156,7 @@ async def vpns(request):
     """
     try:
         vpn_env = request.app["CONFIG"]["vpn_env"]
-        DIR = f"{vpn_env['vpnconfig']}/ovpn_tcp"
+        DIR = f"{vpn_env['vpnconfigs']}/ovpn_tcp/"
         all_tcp_vpns = []
         for f in os.listdir(DIR):
             try:
@@ -163,7 +166,8 @@ async def vpns(request):
                 else:
                     all_tcp_vpns.append(s[0][:-5])
             except Exception as e:
-                print("error: ", e)
+
+                logger.exeception("error parsing filename")
         return web.json_response({"vpns": all_tcp_vpns})
     except Exception as e:
         return web.Response(text=e)
