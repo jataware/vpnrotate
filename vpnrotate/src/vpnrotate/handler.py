@@ -1,7 +1,10 @@
 import os
-from time import perf_counter
 import logging
 from logging import Logger
+import pathlib
+
+from time import perf_counter
+
 
 from aiohttp import web
 
@@ -164,7 +167,7 @@ async def vpns(request):
                 if "nord" in s[0]:
                     all_tcp_vpns.append(s[0])
                 else:
-                    all_tcp_vpns.append(s[0][:-5])
+                    all_tcp_vpns.append(pathlib.Path(s[0]).stem)
             except Exception as e:
 
                 logger.exeception("error parsing filename")
