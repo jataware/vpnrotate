@@ -1,6 +1,7 @@
 import os
-import pathlib
 import logging
+import pathlib
+
 from logging import Logger
 
 from time import perf_counter
