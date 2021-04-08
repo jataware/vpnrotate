@@ -37,8 +37,18 @@ def load_settings(path):
 
 app_config = t.Dict(
     {
-        t.Key("app"): t.Dict({"host": t.String(), "port": t.Int(),}),
-        t.Key("vpn_env"): t.Dict({"vpnconfigs": t.String(), "vpnconfig": t.String(),}),
+        t.Key("app"): t.Dict(
+            {
+                "host": t.String(),
+                "port": t.Int(),
+            }
+        ),
+        t.Key("vpn_env"): t.Dict(
+            {
+                "vpnconfigs": t.String(),
+                "vpnconfig": t.String(),
+            }
+        ),
     }
 )
 

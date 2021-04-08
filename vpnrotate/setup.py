@@ -22,5 +22,7 @@ setup(
     test_suite="tests",
     install_requires=read_requirements("requirements.txt"),
     zip_safe=False,
-    entry_points={"console_scripts": ["vpnrotate=vpnrotate.app:main"],},
+    entry_points={
+        "console_scripts": ["vpnrotate=vpnrotate.app:main"],
+    },
 )
