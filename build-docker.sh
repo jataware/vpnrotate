@@ -15,7 +15,7 @@ fi
 
 DT=$(date +"%Y%m%d")
 GIT=${DT}.git.$(git rev-parse --short HEAD)
-VERSION="0.1.1"
+VERSION="0.1.2"
 GROUP=jataware
 NAME=vpnproxy
 IMAGE="${GROUP}/${NAME}"

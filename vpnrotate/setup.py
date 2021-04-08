@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 """
 version managed by bump2version
 """
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 
 def read_requirements(path: str):
