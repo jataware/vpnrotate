@@ -17,7 +17,7 @@ export SERVER=us6053.nordvpn.com
 env
 
 # To download VPN files
-./ovpn-download.sh
+./ovpn-download-aws.sh
 
 # Build and spin up the container
 ./build-docker.sh
