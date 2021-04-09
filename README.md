@@ -11,8 +11,6 @@ export PIAPASS="<user>"
 export WINDUSER="<user"
 export WINDPASS="<pass>"
 
-export SERVER=us6053.nordvpn.com
-
 # to check environment variables are correct
 env
 
@@ -23,14 +21,6 @@ env
 ./build-docker.sh
 
 docker-compose up -d
-
-# check if
-curl -vv -Lx localhost:8118 localhost:8080/secure
-
-# change vpn and restart vpn service
-curl -X PUT "http://localhost:8080/vpn/restart" \
-     -H "Content-Type: application/json" \
-     -d "{\"server\":\"us5426.nordvpn.com\"}"
 ```
 Swagger docs http://localhost:8080/api/docs/
 
