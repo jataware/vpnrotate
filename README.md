@@ -8,13 +8,20 @@ export NORDUSER="<user>"
 export NORDPASS="<pass>"
 export PIAUSER="<user>"
 export PIAPASS="<user>"
+export WINDUSER="<user"
+export WINDPASS="<pass>"
 
 export SERVER=us6053.nordvpn.com
 
 # to check environment variables are correct
 env
 
+# To download VPN files
+./ovpn-download.sh
+
+# Build and spin up the container
 ./build-docker.sh
+
 docker-compose up -d
 
 # check if
