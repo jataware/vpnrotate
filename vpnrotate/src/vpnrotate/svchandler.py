@@ -6,20 +6,17 @@ from aiofiles import os
 
 OVPN_LOCK = asyncio.Semaphore(1)
 
-
 async def file_exists(p):
     try:
         return stat.S_ISREG((await os.stat(p)).st_mode)
     except FileNotFoundError:
         return False
 
-
 async def dir_exists(p):
     try:
         return stat.S_ISDIR((await os.stat(p)).st_mode)
     except FileNotFoundError:
         return False
-
 
 async def file_copy(src: str, dest: str, buff_size: int = 4096):
     async with aiofiles.open(dest, mode="wb") as outfile, aiofiles.open(
@@ -31,22 +28,28 @@ async def file_copy(src: str, dest: str, buff_size: int = 4096):
         await outfile.flush()
         # fmt: on
 
-
 async def changeVPNConfig(vpnconfigs: str, vpnconf: str, server: str):
-    ovpn_file = f"{vpnconfigs}/ovpn_tcp/{server}.tcp.ovpn"
+    # NordVPN
+    if "nord" in server:
+        ovpn_file = f"{vpnconfigs}/ovpn_tcp/{server}.tcp.ovpn"
+    
+    # Windscribe and PIA
     if "nord" not in server:
         ovpn_file = f"{vpnconfigs}/ovpn_tcp/{server}.ovpn"
+    
     async with OVPN_LOCK:
         if not await file_exists(ovpn_file):
             raise Exception(f"ovpn file not found {ovpn_file}")
         await os.remove(vpnconf)
         await file_copy(ovpn_file, vpnconf)
         await os.remove("/etc/ovpn/auth.conf")
+        
         if "nord" in server:
             await file_copy("/etc/ovpn/nord.conf", "/etc/ovpn/auth.conf")
+        if "Wind" in server:
+            await file_copy("/etc/ovpn/wind.conf", "/etc/ovpn/auth.conf")
         else:
             await file_copy("/etc/ovpn/pia.conf", "/etc/ovpn/auth.conf")
-
 
 async def restartVPN():
     async with OVPN_LOCK:

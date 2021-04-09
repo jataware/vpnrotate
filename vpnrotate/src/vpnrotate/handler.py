@@ -1,8 +1,14 @@
+import logging
+import os
+import pathlib
+from logging import Logger
 from time import perf_counter
 
 from aiohttp import web
 
 from . import __version__, nordvpnapi, svchandler
+
+logger: Logger = logging.getLogger(__name__)
 
 """
 Swagger Help: https://swagger.io/docs/specification/describing-parameters/
@@ -137,6 +143,47 @@ async def healthcheck(request):
     return web.Response(text="ok")
 
 
+async def vpns(request):
+    """
+    ---
+    summary: This end-point returns available vpn servers.
+    tags:
+    - VPN
+    responses:
+        "200":
+            description: Return "ok" text
+        "500":
+            description: return error
+    """
+    try:
+        vpns = {"nordvpn": [], "pia": [], "wind":[]}
+
+        vpn_env = request.app["CONFIG"]["vpn_env"]
+
+        for vpn in vpns.keys():
+            DIR = f"{vpn_env['vpnconfigs']}/{vpn}/ovpn_tcp/"
+            temp_vpns = []
+            for f in os.listdir(DIR):
+                try:
+                    #Filter out crt/key/pem
+                    if "ovpn" in f:
+                        if vpn == "nordvpn":
+                            s = f.split(".tcp")
+                            temp_vpns.append(s[0])
+                        else:
+                            s = f.split(".ovpn")
+                            temp_vpns.append(s[0])
+                        vpns[vpn] = temp_vpns
+
+                except Exception:
+                    logger.exeception("error parsing filename")
+
+        return web.json_response(vpns)
+
+    except Exception as e:
+        return web.Response(text=e)
+
+
 def routing_table(app):
     return [
         web.get("/", index, allow_head=False),
@@ -145,6 +192,7 @@ def routing_table(app):
         web.get("/secure", secure, allow_head=False),
         web.get("/countries", countries, allow_head=False),
         web.get("/recommend", recommend, allow_head=False),
+        web.get("/vpns", vpns, allow_head=False),
         web.put("/vpn/restart", restart_vpn),
     ]
 
