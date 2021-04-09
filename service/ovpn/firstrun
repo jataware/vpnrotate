@@ -17,6 +17,7 @@ else
   exit 1
 fi
 
+
 if [ -n "$USERNAME" -a -n "$PASSWORD" ]; then
   echo "$USERNAME" > /etc/ovpn/nord.conf
   echo "$PASSWORD" >> /etc/ovpn/nord.conf
@@ -25,7 +26,7 @@ if [ -n "$USERNAME" -a -n "$PASSWORD" ]; then
   chmod 600 /etc/ovpn/nord.conf
   chmod 600 /etc/ovpn/auth.conf
 else
-  echo "ERROR: No NordVPN credentials available please set USERNAME and PASSWORD"
+  echo "ERROR: No credentials available please set USERNAME and PASSWORD"
   exit 1
 fi
 
@@ -34,16 +35,8 @@ if [ -n "$PUSERNAME" -a -n "$PPASSWORD" ]; then
   echo "$PPASSWORD" >> /etc/ovpn/pia.conf
   chmod 600 /etc/ovpn/pia.conf
 else
-  echo "ERROR: No PIA credentials available please set USERNAME and PASSWORD"
+  echo "ERROR: No credentials available please set USERNAME and PASSWORD"
   exit 1
 fi
 
-if [ -n "$WUSERNAME" -a -n "$WPASSWORD" ]; then
-  echo "$WUSERNAME" > /etc/ovpn/wind.conf
-  echo "$WPASSWORD" >> /etc/ovpn/wind.conf
-  chmod 600 /etc/ovpn/wind.conf
-else
-  echo "ERROR: No Windscribe credentials available please set USERNAME and PASSWORD"
-  exit 1
-fi
 
