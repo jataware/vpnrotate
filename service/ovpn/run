@@ -10,8 +10,9 @@ echo "Starting VPN"
 
 if [ ! -f /etc/runonce/ovpn ]; then
   echo "VPN first run setup"
-  ./firstrun
+  sv o ovpn
   touch /etc/runonce/ovpn
+  exit 0
 fi
 
 exec openvpn --config /etc/ovpn/openvpn.conf --auth-user-pass /etc/ovpn/auth.conf
