@@ -88,26 +88,39 @@ async def restart_vpn(request):
           schema:
             type: object
             properties:
+              vpn:
+                type: string
+                enum:
+                  - nordvpn
+                  - pia
+                  - wind
               server:
                 type: string
             required:
+              - vpn
               - server
           examples:
             example:
               summary: Sample post
               value:
-                server: us5567.nordvpn.com
+                vpn: nordvpn
+                server: us8273.nordvpn.com
     responses:
         "200":
             description: ok
     """
-    body = await request.json()
-    vpn_env = request.app["CONFIG"]["vpn_env"]
-    await svchandler.changeVPNConfig(
-        vpn_env["vpnconfigs"], vpn_env["vpnconfig"], body.get("server")
-    )
-    await svchandler.restartVPN()
-    return web.Response(text="ok")
+    try:
+        body = await request.json()
+        vpn_env = request.app["CONFIG"]["vpn_env"]
+        await svchandler.changeVPNConfig(
+            vpn_env["vpnconfigs"], vpn_env["vpnconfig"], body.get("server")
+        )
+        await svchandler.restartVPN()
+        return web.Response(text="ok")
+
+    except Exception as e:
+        logger.exception("restart failed")
+        raise web.HTTPInternalServerError(text=str(e))
 
 
 async def metrics(request):
