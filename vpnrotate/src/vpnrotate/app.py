@@ -2,9 +2,9 @@ import logging
 from logging import Logger
 
 from aiohttp import web
-from aiohttp_swagger3 import SwaggerDocs, SwaggerUiSettings  # noqa: I201
+from aiohttp_swagger3 import SwaggerDocs, SwaggerUiSettings
 
-from . import __version__, config, handler, metrics, nordvpnapi
+from . import __version__, config, handler, metrics
 
 logger: Logger = logging.getLogger(__name__)
 
@@ -12,7 +12,6 @@ logger: Logger = logging.getLogger(__name__)
 async def startup_handler(app: web.Application) -> None:
     logger.info("starting up")
     app["METRICS"] = metrics.Metrics
-    app["COUNTRY_CODES"] = await nordvpnapi.getCountryCodes()
 
 
 async def shutdown_handler(app: web.Application) -> None:

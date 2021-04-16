@@ -6,7 +6,7 @@ from time import perf_counter
 
 from aiohttp import web
 
-from . import __version__, nordvpnapi, svchandler
+from . import __version__, svchandler
 
 logger: Logger = logging.getLogger(__name__)
 
@@ -18,60 +18,6 @@ Swagger Help: https://swagger.io/docs/specification/describing-parameters/
 # Routes
 async def index(request):
     return web.Response(text=__version__)
-
-
-async def secure(request):
-    """
-    ---
-    summary: This end-point allow to test if the vpn is up
-    tags:
-    - VPN
-    responses:
-        "200":
-            description: Return true|false
-    """
-    resp = await nordvpnapi.getSecure()
-    headers = {f"x-nordvpn-{k}": v for k, v in resp.items()}
-    return web.Response(
-        text=str(resp.get("status", "") == "Protected").lower(), headers=headers
-    )
-
-
-async def countries(request):
-    """
-    ---
-    summary: Get recommendations
-    tags:
-    - VPN
-    responses:
-        "200":
-            description: country list
-    """
-    country_code = request.app["COUNTRY_CODES"]
-    return web.json_response(list(country_code.keys()))
-
-
-async def recommend(request):
-    """
-    ---
-    summary: Get recommendations
-    tags:
-    - VPN
-    parameters:
-      - in: query
-        name: country
-        schema:
-          type: string
-        description: country code for filter
-    responses:
-        "200":
-            description: recommendation list
-    """
-    params = request.rel_url.query
-    country = params.get("country", "").lower()
-    country_code = request.app["COUNTRY_CODES"].get(country)
-    resp = await nordvpnapi.getRecommendations(country_code=country_code)
-    return web.json_response(resp)
 
 
 async def restart_vpn(request):
@@ -90,10 +36,6 @@ async def restart_vpn(request):
             properties:
               vpn:
                 type: string
-                enum:
-                  - nordvpn
-                  - pia
-                  - wind
               server:
                 type: string
             required:
@@ -143,19 +85,6 @@ async def metrics(request):
     return web.json_response(content)
 
 
-async def healthcheck(request):
-    """
-    ---
-    summary: This end-point allow to test that service is up.
-    tags:
-    - Health Check
-    responses:
-        "200":
-            description: Return "ok" text
-    """
-    return web.Response(text="ok")
-
-
 async def vpns(request):
     """
     ---
@@ -200,11 +129,7 @@ async def vpns(request):
 def routing_table(app):
     return [
         web.get("/", index, allow_head=False),
-        web.get("/healthcheck", healthcheck, allow_head=False),
         web.get("/metrics", metrics, allow_head=False),
-        web.get("/secure", secure, allow_head=False),
-        web.get("/countries", countries, allow_head=False),
-        web.get("/recommend", recommend, allow_head=False),
         web.get("/vpns", vpns, allow_head=False),
         web.put("/vpn/restart", restart_vpn),
     ]
