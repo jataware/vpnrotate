@@ -86,6 +86,19 @@ async def metrics(request):
     return web.json_response(content)
 
 
+async def healthcheck(request):
+    """
+    ---
+    summary: This end-point allow to test that service is up.
+    tags:
+    - Health Check
+    responses:
+        "200":
+            description: Return "ok" text
+    """
+    return web.Response(text="ok")
+
+
 async def vpns(request):
     """
     ---
@@ -161,6 +174,7 @@ async def vpns(request):
 def routing_table(app):
     return [
         web.get("/", index, allow_head=False),
+        web.get("/healthcheck", healthcheck, allow_head=False),
         web.get("/metrics", metrics, allow_head=False),
         web.get("/vpns", vpns, allow_head=False),
         web.put("/vpn/restart", restart_vpn),
