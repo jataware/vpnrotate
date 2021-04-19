@@ -10,7 +10,6 @@ from . import __version__, svchandler
 
 logger: Logger = logging.getLogger(__name__)
 
-logger: Logger = logging.getLogger(__name__)
 
 """
 Swagger Help: https://swagger.io/docs/specification/describing-parameters/
