@@ -1,7 +1,6 @@
 import logging
 from logging import Logger
 
-# Comment out for TOX test
 from aiohttp import web
 from aiohttp_swagger3 import SwaggerDocs, SwaggerUiSettings  # noqa: I201
 
