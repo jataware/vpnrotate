@@ -6,6 +6,7 @@ version managed by bump2version
 
 VERSION = "0.1.4"
 
+
 def read_requirements(path: str):
     with open(path) as f:
         return f.read().splitlines()

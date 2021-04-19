@@ -100,7 +100,7 @@ async def vpns(request):
             description: return error
     """
     try:
-        vpns = {"nordvpn": [], "pia": [], "wind":[]}
+        vpns = {"nordvpn": [], "pia": [], "wind": []}
 
         vpn_env = request.app["CONFIG"]["vpn_env"]
 
@@ -109,7 +109,7 @@ async def vpns(request):
             temp_vpns = []
             for f in os.listdir(DIR):
                 try:
-                    #Filter out crt/key/pem
+                    # Filter out crt/key/pem
                     if "ovpn" in f:
                         if vpn == "nordvpn":
                             s = f.split(".tcp")
