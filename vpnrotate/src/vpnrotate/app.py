@@ -2,8 +2,8 @@ import logging
 from logging import Logger
 
 # Comment out for TOX test
-# from aiohttp import web
-# from aiohttp_swagger3 import SwaggerDocs, SwaggerUiSettings
+from aiohttp import web
+from aiohttp_swagger3 import SwaggerDocs, SwaggerUiSettings
 
 from . import __version__, config, handler, metrics
 
