@@ -140,37 +140,6 @@ async def vpns(request):
         return web.Response(text=e)
 
 
-async def vpns(request):
-    """
-    ---
-    summary: This end-point returns available vpn servers.
-    tags:
-    - VPN
-    responses:
-        "200":
-            description: Return "ok" text
-        "500":
-            description: return error
-    """
-    try:
-        vpn_env = request.app["CONFIG"]["vpn_env"]
-        DIR = f"{vpn_env['vpnconfigs']}/ovpn_tcp/"
-        all_tcp_vpns = []
-        for f in os.listdir(DIR):
-            try:
-                s = f.split(".tcp")
-                if "nord" in s[0]:
-                    all_tcp_vpns.append(s[0])
-                else:
-                    all_tcp_vpns.append(pathlib.Path(s[0]).stem)
-            except Exception:
-
-                logger.exeception("error parsing filename")
-        return web.json_response({"vpns": all_tcp_vpns})
-    except Exception as e:
-        return web.Response(text=e)
-
-
 def routing_table(app):
     return [
         web.get("/", index, allow_head=False),
