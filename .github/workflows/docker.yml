@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Download ovpn data
+      run: ./ovpn-download-aws.sh    
     - name: Create docker container
       run: ./build-docker.sh
     - name: Run docker-compose
