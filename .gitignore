@@ -143,3 +143,4 @@ data/
 logs/
 !data/logs/.keep
 nordvpn
+.DS_Store

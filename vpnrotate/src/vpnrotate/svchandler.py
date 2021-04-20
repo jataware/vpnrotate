@@ -33,17 +33,37 @@ async def file_copy(src: str, dest: str, buff_size: int = 4096):
 
 
 async def changeVPNConfig(vpnconfigs: str, vpnconf: str, server: str):
-    ovpn_file = f"{vpnconfigs}/ovpn_tcp/{server}.tcp.ovpn"
-    if "nord" not in server:
-        ovpn_file = f"{vpnconfigs}/ovpn_tcp/{server}.ovpn"
+    # NordVPN
+    if "nord" in server:
+        ovpn_file = f"{vpnconfigs}/nordvpn/ovpn_tcp/{server}.tcp.ovpn"
+
+    # Wind
+    elif "Wind" in server:
+        ovpn_file = f"{vpnconfigs}/wind/ovpn_tcp/{server}.ovpn"
+
+    # PIA
+    else:
+        ovpn_file = f"{vpnconfigs}/pia/ovpn_tcp/{server}.ovpn"
+
     async with OVPN_LOCK:
         if not await file_exists(ovpn_file):
             raise Exception(f"ovpn file not found {ovpn_file}")
-        await os.remove(vpnconf)
+        try:
+            await os.remove(vpnconf)
+
+        except FileNotFoundError:
+            pass
         await file_copy(ovpn_file, vpnconf)
-        await os.remove("/etc/ovpn/auth.conf")
+
+        try:
+            await os.remove("/etc/ovpn/auth.conf")
+        except FileNotFoundError:
+            pass
+
         if "nord" in server:
             await file_copy("/etc/ovpn/nord.conf", "/etc/ovpn/auth.conf")
+        elif "Wind" in server:
+            await file_copy("/etc/ovpn/wind.conf", "/etc/ovpn/auth.conf")
         else:
             await file_copy("/etc/ovpn/pia.conf", "/etc/ovpn/auth.conf")
 

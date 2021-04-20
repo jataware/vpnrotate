@@ -8,22 +8,19 @@ export NORDUSER="<user>"
 export NORDPASS="<pass>"
 export PIAUSER="<user>"
 export PIAPASS="<user>"
-
-export SERVER=us6053.nordvpn.com
+export WINDUSER="<user"
+export WINDPASS="<pass>"
 
 # to check environment variables are correct
 env
 
+# To download VPN files
+./ovpn-download-aws.sh
+
+# Build and spin up the container
 ./build-docker.sh
+
 docker-compose up -d
-
-# check if
-curl -vv -Lx localhost:8118 localhost:8080/secure
-
-# change vpn and restart vpn service
-curl -X PUT "http://localhost:8080/vpn/restart" \
-     -H "Content-Type: application/json" \
-     -d "{\"server\":\"us5426.nordvpn.com\"}"
 ```
 Swagger docs http://localhost:8080/api/docs/
 

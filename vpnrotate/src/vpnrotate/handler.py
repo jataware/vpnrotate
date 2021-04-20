@@ -1,14 +1,14 @@
 import logging
 import os
-import pathlib
 from logging import Logger
 from time import perf_counter
 
 from aiohttp import web
 
-from . import __version__, nordvpnapi, svchandler
+from . import __version__, svchandler
 
 logger: Logger = logging.getLogger(__name__)
+
 
 """
 Swagger Help: https://swagger.io/docs/specification/describing-parameters/
@@ -18,60 +18,6 @@ Swagger Help: https://swagger.io/docs/specification/describing-parameters/
 # Routes
 async def index(request):
     return web.Response(text=__version__)
-
-
-async def secure(request):
-    """
-    ---
-    summary: This end-point allow to test if the vpn is up
-    tags:
-    - VPN
-    responses:
-        "200":
-            description: Return true|false
-    """
-    resp = await nordvpnapi.getSecure()
-    headers = {f"x-nordvpn-{k}": v for k, v in resp.items()}
-    return web.Response(
-        text=str(resp.get("status", "") == "Protected").lower(), headers=headers
-    )
-
-
-async def countries(request):
-    """
-    ---
-    summary: Get recommendations
-    tags:
-    - VPN
-    responses:
-        "200":
-            description: country list
-    """
-    country_code = request.app["COUNTRY_CODES"]
-    return web.json_response(list(country_code.keys()))
-
-
-async def recommend(request):
-    """
-    ---
-    summary: Get recommendations
-    tags:
-    - VPN
-    parameters:
-      - in: query
-        name: country
-        schema:
-          type: string
-        description: country code for filter
-    responses:
-        "200":
-            description: recommendation list
-    """
-    params = request.rel_url.query
-    country = params.get("country", "").lower()
-    country_code = request.app["COUNTRY_CODES"].get(country)
-    resp = await nordvpnapi.getRecommendations(country_code=country_code)
-    return web.json_response(resp)
 
 
 async def restart_vpn(request):
@@ -88,26 +34,35 @@ async def restart_vpn(request):
           schema:
             type: object
             properties:
+              vpn:
+                type: string
               server:
                 type: string
             required:
+              - vpn
               - server
           examples:
             example:
               summary: Sample post
               value:
-                server: us5567.nordvpn.com
+                vpn: nordvpn
+                server: us8273.nordvpn.com
     responses:
         "200":
             description: ok
     """
-    body = await request.json()
-    vpn_env = request.app["CONFIG"]["vpn_env"]
-    await svchandler.changeVPNConfig(
-        vpn_env["vpnconfigs"], vpn_env["vpnconfig"], body.get("server")
-    )
-    await svchandler.restartVPN()
-    return web.Response(text="ok")
+    try:
+        body = await request.json()
+        vpn_env = request.app["CONFIG"]["vpn_env"]
+        await svchandler.changeVPNConfig(
+            vpn_env["vpnconfigs"], vpn_env["vpnconfig"], body.get("server")
+        )
+        await svchandler.restartVPN()
+        return web.Response(text="ok")
+
+    except Exception as e:
+        logger.exception("restart failed")
+        raise web.HTTPInternalServerError(text=str(e))
 
 
 async def metrics(request):
@@ -156,20 +111,30 @@ async def vpns(request):
             description: return error
     """
     try:
-        vpn_env = request.app["CONFIG"]["vpn_env"]
-        DIR = f"{vpn_env['vpnconfigs']}/ovpn_tcp/"
-        all_tcp_vpns = []
-        for f in os.listdir(DIR):
-            try:
-                s = f.split(".tcp")
-                if "nord" in s[0]:
-                    all_tcp_vpns.append(s[0])
-                else:
-                    all_tcp_vpns.append(pathlib.Path(s[0]).stem)
-            except Exception:
+        vpns = {"nordvpn": [], "pia": [], "wind": []}
 
-                logger.exeception("error parsing filename")
-        return web.json_response({"vpns": all_tcp_vpns})
+        vpn_env = request.app["CONFIG"]["vpn_env"]
+
+        for vpn in vpns.keys():
+            DIR = f"{vpn_env['vpnconfigs']}/{vpn}/ovpn_tcp/"
+            temp_vpns = []
+            for f in os.listdir(DIR):
+                try:
+                    # Filter out crt/key/pem
+                    if "ovpn" in f:
+                        if vpn == "nordvpn":
+                            s = f.split(".tcp")
+                            temp_vpns.append(s[0])
+                        else:
+                            s = f.split(".ovpn")
+                            temp_vpns.append(s[0])
+                        vpns[vpn] = temp_vpns
+
+                except Exception:
+                    logger.exeception("error parsing filename")
+
+        return web.json_response(vpns)
+
     except Exception as e:
         return web.Response(text=e)
 
@@ -179,9 +144,6 @@ def routing_table(app):
         web.get("/", index, allow_head=False),
         web.get("/healthcheck", healthcheck, allow_head=False),
         web.get("/metrics", metrics, allow_head=False),
-        web.get("/secure", secure, allow_head=False),
-        web.get("/countries", countries, allow_head=False),
-        web.get("/recommend", recommend, allow_head=False),
         web.get("/vpns", vpns, allow_head=False),
         web.put("/vpn/restart", restart_vpn),
     ]
