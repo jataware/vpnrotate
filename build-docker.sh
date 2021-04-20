@@ -15,4 +15,5 @@ docker build \
        -t "${IMAGE}:${GIT}" \
        -t "${NAME}:${VERSION}" \
        -t "registry.gitlab.com/${IMAGE}:${VERSION}" \
+       -t "registry.gitlab.com/${IMAGE}:${VERSION}-dev" \
        .
