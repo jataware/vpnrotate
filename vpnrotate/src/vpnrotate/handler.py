@@ -57,7 +57,6 @@ async def vpninfo(request):
         cmd = "curl -s ipinfo.io/$(curl -s ifconfig.me)"
         vpn_info = svchandler.curlit(cmd)
         
-
         all_info = {**provider, **secure, **vpn_info}
 
         return web.json_response(all_info)
