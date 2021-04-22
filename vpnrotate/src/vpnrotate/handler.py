@@ -1,6 +1,6 @@
+import json
 import logging
 import os
-import json
 from logging import Logger
 from time import perf_counter
 

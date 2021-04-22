@@ -110,7 +110,7 @@ def provider(fn, vpn, server):
     data["provider"] = vpn
     data["server"] = server
 
-    with open(fn, 'w') as outfile:
+    with open(fn, "w") as outfile:
         json.dump(data, outfile)
 
 
@@ -118,4 +118,4 @@ def curlit(cmd):
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     vpn_bytes, err = output.communicate()
 
-    return json.loads(vpn_bytes.decode('utf8'))
+    return json.loads(vpn_bytes.decode("utf8"))
