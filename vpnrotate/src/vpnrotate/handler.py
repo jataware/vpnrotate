@@ -39,7 +39,8 @@ async def vpninfo(request):
 
     except Exception as e:
         return web.Response(text=str(e))
-    
+
+
 async def vpnsecure(request):
     """
     ---
@@ -60,23 +61,22 @@ async def vpnsecure(request):
         # Get container IP information
         cmd = "curl -s ipinfo.io/$(curl -s ifconfig.me)"
         vpn_info = svchandler.curlit(cmd)
-        
+
         local_IP = local_info["ip"]
         container_IP = vpn_info["ip"]
-         
+
         if local_IP != container_IP:
             secure = True
         else:
-            secure = False          
-        
-        content = {"secure": secure,
-                   "local_IP": local_IP,
-                   "container_IP": container_IP}
-         
+            secure = False
+
+        content = {"secure": secure, "local_IP": local_IP, "container_IP": container_IP}
+
         return web.json_response(content)
 
     except Exception as e:
-        return web.Response(text=str(e))    
+        return web.Response(text=str(e))
+
 
 async def restart_vpn(request):
     """
@@ -205,7 +205,7 @@ def routing_table(app):
         web.get("/vpns", vpns, allow_head=False),
         web.put("/vpn/restart", restart_vpn),
         web.get("/vpninfo", vpninfo, allow_head=False),
-        web.get("/vpnsecure", vpnsecure, allow_head=False)
+        web.get("/vpnsecure", vpnsecure, allow_head=False),
     ]
 
 
