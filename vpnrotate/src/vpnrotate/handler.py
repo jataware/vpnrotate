@@ -40,7 +40,7 @@ async def vpninfo(request):
                 provider = json.load(json_file)
 
         except FileNotFoundError:
-            provider = {"provider": "none", "server":"none"}
+            provider = {"provider": "none", "server": "none"}
 
         # get if secure connection
         try:
@@ -48,15 +48,15 @@ async def vpninfo(request):
             fdir = f"{vpn_env['vpnconfigs']}/local_connect/local_connect.json"
             content = svchandler.is_secure(fdir)
             secure = {"connected": content["secure"]}
-        
+
         except:
             secure = {"connected": False}
             return secure
-        
+
         # Get VPN info
         cmd = "curl -s ipinfo.io/$(curl -s ifconfig.me)"
         vpn_info = svchandler.curlit(cmd)
-        
+
         all_info = {**provider, **secure, **vpn_info}
 
         return web.json_response(all_info)
@@ -78,8 +78,8 @@ async def vpnsecure(request):
     try:
         # Read in local machine IP information
         vpn_env = request.app["CONFIG"]["vpn_env"]
-        fdir = f"{vpn_env['vpnconfigs']}/local_connect/local_connect.json"        
-        
+        fdir = f"{vpn_env['vpnconfigs']}/local_connect/local_connect.json"
+
         content = svchandler.is_secure(fdir)
 
         return web.json_response(content)

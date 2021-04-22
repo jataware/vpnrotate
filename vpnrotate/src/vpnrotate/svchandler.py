@@ -1,6 +1,6 @@
 import asyncio
-import stat
 import json
+import stat
 import subprocess
 
 import aiofiles
@@ -35,7 +35,7 @@ async def file_copy(src: str, dest: str, buff_size: int = 4096):
 
 
 async def changeVPNConfig(vpnconfigs: str, vpnconf: str, server: str):
-    
+
     provider_info = f"{vpnconfigs}/local_connect/provider.txt"
 
     # NordVPN
@@ -50,7 +50,7 @@ async def changeVPNConfig(vpnconfigs: str, vpnconf: str, server: str):
     else:
         ovpn_file = f"{vpnconfigs}/pia/ovpn_tcp/{server}.ovpn"
         provider(provider_info, "pia", server)
-        
+
     async with OVPN_LOCK:
         if not await file_exists(ovpn_file):
             raise Exception(f"ovpn file not found {ovpn_file}")
@@ -109,7 +109,7 @@ def provider(fn, vpn, server):
     data = {}
     data["provider"] = vpn
     data["server"] = server
-    
+
     with open(fn, 'w') as outfile:
         json.dump(data, outfile)
 
@@ -117,5 +117,5 @@ def provider(fn, vpn, server):
 def curlit(cmd):
     output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
     vpn_bytes, err = output.communicate()
-    
-    return json.loads(vpn_bytes.decode('utf8'))        
+
+    return json.loads(vpn_bytes.decode('utf8'))
