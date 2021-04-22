@@ -32,10 +32,22 @@ async def vpninfo(request):
             description: Return "ok" text
     """
     try:
+        # Get vpn provider and server
+        try:
+            vpn_env = request.app["CONFIG"]["vpn_env"]
+            fdir = f"{vpn_env['vpnconfigs']}/local_connect/provider.txt"
+            with open(fdir) as json_file:
+                provider = json.load(json_file)
+
+        except FileNotFoundError:
+            provider = {}
+
+        # Get VPN info
         cmd = "curl -s ipinfo.io/$(curl -s ifconfig.me)"
         vpn_info = svchandler.curlit(cmd)
+        all_info = {**provider, **vpn_info}
 
-        return web.json_response(vpn_info)
+        return web.json_response(all_info)
 
     except Exception as e:
         return web.Response(text=str(e))

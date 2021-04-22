@@ -12,6 +12,7 @@ IMAGE="${GROUP}/${NAME}"
 
 # Get local machine IP info
 mkdir -p ovpn_configs/local_connect
+cp provider.txt ovpn_configs/local_connect/provider.txt
 curl -s ipinfo.io/$(curl -s ifconfig.me) > ovpn_configs/local_connect/local_connect.json
 
 docker build \
