@@ -3,7 +3,7 @@
 DT=$(date +"%Y%m%d")
 GIT=${DT}.git.$(git rev-parse --short HEAD)
 
-VERSION="0.1.4"
+VERSION="0.1.5"
 
 GROUP=jataware
 NAME=vpnproxy
