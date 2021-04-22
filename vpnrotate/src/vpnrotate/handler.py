@@ -1,6 +1,5 @@
 import logging
 import os
-import subprocess
 import json
 from logging import Logger
 from time import perf_counter
@@ -49,7 +48,7 @@ async def vpninfo(request):
             content = svchandler.is_secure(fdir)
             secure = {"connected": content["secure"]}
 
-        except:
+        except Exception:
             secure = {"connected": False}
             return secure
 
