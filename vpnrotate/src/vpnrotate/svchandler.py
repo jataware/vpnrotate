@@ -1,5 +1,7 @@
 import asyncio
 import stat
+import json
+import subprocess
 
 import aiofiles
 from aiofiles import os
@@ -73,3 +75,10 @@ async def restartVPN():
         process = await asyncio.create_subprocess_exec("sv", "restart", "ovpn")
         rc = await process.wait()
         return rc == 0, rc
+
+
+def curlit(cmd):
+    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    vpn_bytes, err = output.communicate()
+    
+    return json.loads(vpn_bytes.decode('utf8'))        

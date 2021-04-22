@@ -1,5 +1,7 @@
 import logging
 import os
+import subprocess
+import json
 from logging import Logger
 from time import perf_counter
 
@@ -14,11 +16,67 @@ logger: Logger = logging.getLogger(__name__)
 Swagger Help: https://swagger.io/docs/specification/describing-parameters/
 """
 
-
 # Routes
 async def index(request):
     return web.Response(text=__version__)
 
+
+async def vpninfo(request):
+    """
+    ---
+    summary: Returns current VPN information
+    tags:
+    - VPN Information
+    responses:
+        "200":
+            description: Return "ok" text
+    """
+    try:
+        cmd = "curl -s ipinfo.io/$(curl -s ifconfig.me)"
+        vpn_info = svchandler.curlit(cmd)
+
+        return web.json_response(vpn_info)
+
+    except Exception as e:
+        return web.Response(text=str(e))
+    
+async def vpnsecure(request):
+    """
+    ---
+    summary: Compares container IP with current IP to test if container is "secure"
+    tags:
+    - VPN Information
+    responses:
+        "200":
+            description: Return "ok" text
+    """
+    try:
+        # Read in local machine IP information
+        vpn_env = request.app["CONFIG"]["vpn_env"]
+        fdir = f"{vpn_env['vpnconfigs']}/local_connect/local_connect.json"
+        with open(fdir) as f:
+            local_info = json.load(f)
+
+        # Get container IP information
+        cmd = "curl -s ipinfo.io/$(curl -s ifconfig.me)"
+        vpn_info = svchandler.curlit(cmd)
+        
+        local_IP = local_info["ip"]
+        container_IP = vpn_info["ip"]
+         
+        if local_IP != container_IP:
+            secure = True
+        else:
+            secure = False          
+        
+        content = {"secure": secure,
+                   "local_IP": local_IP,
+                   "container_IP": container_IP}
+         
+        return web.json_response(content)
+
+    except Exception as e:
+        return web.Response(text=str(e))    
 
 async def restart_vpn(request):
     """
@@ -46,7 +104,7 @@ async def restart_vpn(request):
               summary: Sample post
               value:
                 vpn: nordvpn
-                server: us8273.nordvpn.com
+                server: us6782.nordvpn.com
     responses:
         "200":
             description: ok
@@ -146,6 +204,8 @@ def routing_table(app):
         web.get("/metrics", metrics, allow_head=False),
         web.get("/vpns", vpns, allow_head=False),
         web.put("/vpn/restart", restart_vpn),
+        web.get("/vpninfo", vpninfo, allow_head=False),
+        web.get("/vpnsecure", vpnsecure, allow_head=False)
     ]
 
 

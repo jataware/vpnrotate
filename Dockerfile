@@ -21,7 +21,9 @@ RUN apk --update --no-cache add \
       openvpn \
       runit \
       gcc \
-      musl-dev
+      musl-dev \
+      curl \
+      vim
 
 RUN rm -rf /var/cache/apk/* \
     && mkdir -p /etc/runonce/ \

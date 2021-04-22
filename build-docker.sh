@@ -9,6 +9,11 @@ GROUP=jataware
 NAME=vpnproxy
 IMAGE="${GROUP}/${NAME}"
 
+
+# Get local machine IP info
+mkdir -p ovpn_configs/local_connect
+curl -s ipinfo.io/$(curl -s ifconfig.me) > ovpn_configs/local_connect/local_connect.json
+
 docker build \
        -t "${IMAGE}:dev" \
        -t "${IMAGE}:${VERSION}" \
