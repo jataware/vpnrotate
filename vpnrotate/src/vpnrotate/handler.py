@@ -15,6 +15,7 @@ logger: Logger = logging.getLogger(__name__)
 Swagger Help: https://swagger.io/docs/specification/describing-parameters/
 """
 
+
 # Routes
 async def index(request):
     return web.Response(text=__version__)
