@@ -81,6 +81,30 @@ async def restartVPN():
         return rc == 0, rc
 
 
+def is_secure(fdir):
+    try:
+        with open(fdir) as f:
+            local_info = json.load(f)
+
+        # Get container IP information
+        cmd = "curl -s ipinfo.io/$(curl -s ifconfig.me)"
+        vpn_info = curlit(cmd)
+
+        local_IP = local_info["ip"]
+        container_IP = vpn_info["ip"]
+
+        if local_IP != container_IP:
+            secure = True
+        else:
+            secure = False
+
+        content = {"secure": secure, "local_IP": local_IP, "container_IP": container_IP}
+
+        return content
+    except Exception as e:
+        print(str(e))
+
+
 def provider(fn, vpn, server):
     data = {}
     data["provider"] = vpn
