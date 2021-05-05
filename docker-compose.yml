@@ -18,7 +18,6 @@ services:
       - PPASSWORD=$PIAPASS
       - WUSERNAME=$WINDUSER
       - WPASSWORD=$WINDPASS
-      - SERVER=$SERVER
       - LOCAL_NETWORK=192.168.1.0/24
     volumes:
       - ovpn_configs:/etc/ovpn/configs
