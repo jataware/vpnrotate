@@ -1,5 +1,7 @@
 import asyncio
+import json
 import stat
+import subprocess
 
 import aiofiles
 from aiofiles import os
@@ -33,17 +35,21 @@ async def file_copy(src: str, dest: str, buff_size: int = 4096):
 
 
 async def changeVPNConfig(vpnconfigs: str, vpnconf: str, server: str):
+
+    provider_info = f"{vpnconfigs}/local_connect/provider.txt"
+
     # NordVPN
     if "nord" in server:
         ovpn_file = f"{vpnconfigs}/nordvpn/ovpn_tcp/{server}.tcp.ovpn"
-
+        provider(provider_info, "nordvpn", server)
     # Wind
     elif "Wind" in server:
         ovpn_file = f"{vpnconfigs}/wind/ovpn_tcp/{server}.ovpn"
-
+        provider(provider_info, "windscribe", server)
     # PIA
     else:
         ovpn_file = f"{vpnconfigs}/pia/ovpn_tcp/{server}.ovpn"
+        provider(provider_info, "pia", server)
 
     async with OVPN_LOCK:
         if not await file_exists(ovpn_file):
@@ -73,3 +79,43 @@ async def restartVPN():
         process = await asyncio.create_subprocess_exec("sv", "restart", "ovpn")
         rc = await process.wait()
         return rc == 0, rc
+
+
+def is_secure(fdir):
+    try:
+        with open(fdir) as f:
+            local_info = json.load(f)
+
+        # Get container IP information
+        cmd = "curl -s ipinfo.io/$(curl -s ifconfig.me)"
+        vpn_info = curlit(cmd)
+
+        local_IP = local_info["ip"]
+        container_IP = vpn_info["ip"]
+
+        if local_IP != container_IP:
+            secure = True
+        else:
+            secure = False
+
+        content = {"secure": secure, "local_IP": local_IP, "container_IP": container_IP}
+
+        return content
+    except Exception as e:
+        print(str(e))
+
+
+def provider(fn, vpn, server):
+    data = {}
+    data["provider"] = vpn
+    data["server"] = server
+
+    with open(fn, "w") as outfile:
+        json.dump(data, outfile)
+
+
+def curlit(cmd):
+    output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    vpn_bytes, err = output.communicate()
+
+    return json.loads(vpn_bytes.decode("utf8"))
