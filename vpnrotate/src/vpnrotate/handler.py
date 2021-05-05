@@ -107,7 +107,6 @@ async def restart_vpn(request):
               server:
                 type: string
             required:
-              - vpn
               - server
           examples:
             example:
