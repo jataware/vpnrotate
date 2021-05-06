@@ -4,7 +4,7 @@ from logging import Logger
 from aiohttp import web
 from aiohttp_swagger3 import SwaggerDocs, SwaggerUiSettings  # noqa: I201
 
-from . import __version__, config, handler, metrics
+from . import __version__, config, handler, metrics, utils
 
 logger: Logger = logging.getLogger(__name__)
 
@@ -12,6 +12,8 @@ logger: Logger = logging.getLogger(__name__)
 async def startup_handler(app: web.Application) -> None:
     logger.info("starting up")
     app["METRICS"] = metrics.Metrics
+    app["LOCAL_CONNECT"] = await utils.get_ip_info(extended=True)
+    app["PROVIDER"] = {}
 
 
 async def shutdown_handler(app: web.Application) -> None:

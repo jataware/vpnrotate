@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 from logging import Logger
@@ -6,7 +5,7 @@ from time import perf_counter
 
 from aiohttp import web
 
-from . import __version__, svchandler
+from . import __version__, svchandler, utils
 
 logger: Logger = logging.getLogger(__name__)
 
@@ -29,40 +28,26 @@ async def vpninfo(request):
     - VPN Information
     responses:
         "200":
-            description: Return "ok" text
+            description: Return connection information
     """
     try:
-        # Get vpn provider/server info
-        try:
-            vpn_env = request.app["CONFIG"]["vpn_env"]
-            fdir = f"{vpn_env['vpnconfigs']}/local_connect/provider.txt"
-            with open(fdir) as json_file:
-                provider = json.load(json_file)
+        provider = request.app["PROVIDER"]
+        local_connect = request.app["LOCAL_CONNECT"]
+        current_connect = await utils.get_ip_info(extended=True)
+        secure = current_connect.get("ip", "") != local_connect.get("ip", "")
 
-        except FileNotFoundError:
-            provider = {"provider": "none", "server": "none"}
-
-        # get if secure connection
-        try:
-            vpn_env = request.app["CONFIG"]["vpn_env"]
-            fdir = f"{vpn_env['vpnconfigs']}/local_connect/local_connect.json"
-            content = svchandler.is_secure(fdir)
-            secure = {"connected": content["secure"]}
-
-        except Exception:
-            secure = {"connected": False}
-            return secure
-
-        # Get VPN info
-        cmd = "curl -s ipinfo.io/$(curl -s ifconfig.me)"
-        vpn_info = svchandler.curlit(cmd)
-
-        all_info = {**provider, **secure, **vpn_info}
-
-        return web.json_response(all_info)
+        return web.json_response(
+            {
+                **provider,
+                "local": local_connect,
+                "current": current_connect,
+                "secure": secure,
+            }
+        )
 
     except Exception as e:
-        return web.Response(text=str(e))
+        logger.exception("vpn info failed")
+        raise web.HTTPInternalServerError(text=str(e))
 
 
 async def vpnsecure(request):
@@ -73,19 +58,17 @@ async def vpnsecure(request):
     - VPN Information
     responses:
         "200":
-            description: Return "ok" text
+            description: Return yes / no
     """
     try:
-        # Read in local machine IP information
-        vpn_env = request.app["CONFIG"]["vpn_env"]
-        fdir = f"{vpn_env['vpnconfigs']}/local_connect/local_connect.json"
-
-        content = svchandler.is_secure(fdir)
-
-        return web.json_response(content)
+        local_connect = request.app["LOCAL_CONNECT"]
+        current_connect = await utils.get_ip_info()
+        secure = current_connect.get("ip", "") != local_connect.get("ip", "")
+        return web.json_response(secure)
 
     except Exception as e:
-        return web.Response(text=str(e))
+        logger.exception("vpn secure failed")
+        raise web.HTTPInternalServerError(text=str(e))
 
 
 async def restart_vpn(request):
@@ -121,7 +104,7 @@ async def restart_vpn(request):
     try:
         body = await request.json()
         vpn_env = request.app["CONFIG"]["vpn_env"]
-        await svchandler.changeVPNConfig(
+        request.app["PROVIDER"] = await svchandler.changeVPNConfig(
             vpn_env["vpnconfigs"], vpn_env["vpnconfig"], body.get("server")
         )
         await svchandler.restartVPN()
@@ -203,7 +186,8 @@ async def vpns(request):
         return web.json_response(vpns)
 
     except Exception as e:
-        return web.Response(text=e)
+        logger.exception("vpn error")
+        raise web.HTTPInternalServerError(text=str(e))
 
 
 def routing_table(app):
