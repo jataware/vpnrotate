@@ -8,10 +8,28 @@ from . import __version__, config, handler, metrics
 
 logger: Logger = logging.getLogger(__name__)
 
+HEADERS = {
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0",
+    "connection": "keep-alive",
+    "cache-control": "max-age=0",
+    "accept": "*/*",
+    "accept-language": "en-US;q=1.0,en;q=0.9",
+}
+
+async def get_ip_info():
+    async with aiohttp.ClientSession(raise_for_status=True, headers=HEADERS) as session:
+        async with session.get('http://ifconfig.me/ip') as resp:
+            ip = await resp.text()
+        async with session.get(
+                f"http://ipinfo.io/{ip}",
+                headers={**HEADERS, "accept": "application/json"}) as resp:
+            return await resp.json()
+
 
 async def startup_handler(app: web.Application) -> None:
     logger.info("starting up")
     app["METRICS"] = metrics.Metrics
+    app["LOCAL_CONNECT"] = await get_ip_info()
 
 
 async def shutdown_handler(app: web.Application) -> None:
