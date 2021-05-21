@@ -33,7 +33,7 @@ async def vpninfo(request):
     try:
         provider = request.app["PROVIDER"]
         local_connect = request.app["LOCAL_CONNECT"]
-        current_connect = await utils.get_ip_info(extended=True)
+        current_connect = await utils.get_ip_info(extended=False)
         secure = current_connect.get("ip", "") != local_connect.get("ip", "")
 
         return web.json_response(
