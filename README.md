@@ -89,3 +89,17 @@ python -m pip install -e .
 
 vpnrotate --config=app.dev.yaml --logging=logging.yaml
 ```
+
+
+## Bump Version
+
+
+See [bump2version](https://github.com/c4urself/bump2version)
+
+Bump version, verify changes and commit to branch.
+
+Example:
+
+```
+bump2version --current-version 0.1.6 --new-version 0.1.7 minor --allow-dirty
+```

@@ -2,7 +2,7 @@
 
 set -e
 
-VERSION="0.1.6"
+VERSION="0.1.7"
 
 printf "${GITLAB_PASS}\n" | docker login registry.gitlab.com/jataware -u "${GITLAB_USER}" --password-stdin
 
