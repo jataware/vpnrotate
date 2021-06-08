@@ -5,6 +5,8 @@ app:
 vpn_env:
   # directory of nord ovpn confs
   vpnconfigs: /etc/ovpn/configs
+  # download ovpn configs on init
+  reload_configs_on_startup: yes
   # openvpn conf
   vpnconfig: /etc/ovpn/openvpn.conf
 

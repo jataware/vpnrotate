@@ -30,7 +30,7 @@ async def file_copy(src: str, dest: str, buff_size: int = 4096):
         await outfile.flush()
 
 
-async def changeVPNConfig(vpnconfigs: str, vpnconf: str, server: str) -> dict:
+async def change_vpn_config(vpnconfigs: str, vpnconf: str, server: str) -> dict:
 
     provider = {}
 
@@ -89,8 +89,32 @@ async def changeVPNConfig(vpnconfigs: str, vpnconf: str, server: str) -> dict:
     return provider
 
 
-async def restartVPN():
+async def restart_vpn():
     async with OVPN_LOCK:
         process = await asyncio.create_subprocess_exec("sv", "restart", "ovpn")
         rc = await process.wait()
         return rc == 0, rc
+
+
+async def stop_vpn():
+    async with OVPN_LOCK:
+        process = await asyncio.create_subprocess_exec("sv", "stop", "ovpn")
+        rc = await process.wait()
+        return rc == 0, rc
+
+
+async def start_vpn():
+    async with OVPN_LOCK:
+        process = await asyncio.create_subprocess_exec("sv", "start", "ovpn")
+        rc = await process.wait()
+        return rc == 0, rc
+
+
+async def status_vpn():
+    async with OVPN_LOCK:
+        process = await asyncio.create_subprocess_exec(
+            "sv", "status", "ovpn", stdout=asyncio.subprocess.PIPE
+        )
+        rc = await process.wait()
+        buff = await process.stdout.read()
+        return rc == 0, rc, buff.decode()

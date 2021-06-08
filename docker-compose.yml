@@ -5,7 +5,7 @@ services:
     cap_add:
       - NET_ADMIN
     devices:
-      - /dev/net/tun
+      - /dev/net/tun:/dev/net/tun
     dns:
       - 1.1.1.1
       - 1.0.0.1
@@ -19,17 +19,8 @@ services:
       - WUSERNAME=$WINDUSER
       - WPASSWORD=$WINDPASS
       - LOCAL_NETWORK=192.168.1.0/24
-    volumes:
-      - ovpn_configs:/etc/ovpn/configs
     ports:
       - 8118:8118
       - 8080:8080
     restart: always
 
-volumes:
-  ovpn_configs:
-    driver: local
-    driver_opts:
-      type: volume
-      device: ${PWD}/ovpn_configs
-      o: bind

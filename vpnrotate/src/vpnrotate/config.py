@@ -46,6 +46,7 @@ app_config = t.Dict(
         t.Key("vpn_env"): t.Dict(
             {
                 "vpnconfigs": t.String(),
+                "reload_configs_on_startup": t.Bool(),
                 "vpnconfig": t.String(),
             }
         ),

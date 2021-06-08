@@ -1,40 +1,28 @@
 
-# FROM alpine:3.11.6
-FROM python:3.8.3-alpine3.11
+FROM python:3.9-buster
 # See https://nordvpn.com/servers/tools for recommendations
 
-ENV LC_ALL=en_US.UTF-8 \
-    LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8 \
-    USERNAME="" \
-    PASSWORD="" \
-    PUSERNAME="" \
-    PPASSWORD="" \
-    WUSERNAME="" \
-    WPASSWORD="" \
-    PROTOCOL="tcp" \
-    SERVER="" \
+ENV PROTOCOL="tcp" \
     LOCAL_NETWORK=192.168.1.0/24
 
-RUN apk --update --no-cache add \
+RUN apt-get update && apt-get clean && apt-get install -y \
       privoxy \
       openvpn \
       runit \
       gcc \
       musl-dev \
       curl \
+      dnsutils \
+      mg \
       vim
 
-RUN rm -rf /var/cache/apk/* \
+RUN rm -rf /var/lib/apt/lists/* \
     && mkdir -p /etc/runonce/ \
-    && mkdir -p /var/log/ovpn /var/log/privoxy /var/log/vpnrotate
+    && mkdir -p /var/log/ovpn /var/log/privoxy /var/log/vpnrotate /etc/ovpn/configs
 
 COPY vpnrotate/ /etc/vpnrotate
-RUN pip3 install /etc/vpnrotate
-
-EXPOSE 8118 8080
+RUN pip3 install --upgrade pip && \
+    pip3 install /etc/vpnrotate
 
 COPY service /etc/service/
-VOLUME [ "/app/ovpn/config" ]
-
 CMD ["runsvdir", "/etc/service"]
