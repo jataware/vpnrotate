@@ -63,12 +63,15 @@ make docker_build
 
 ## Docker Compose
 
-```
-docker compose up -d
+`OVPN_DOWNLOAD_ON_START=yes` will download configs on start up. If ommited you will have to
+call refresh manually `POST localhost:8080/vpn/configs`
 
-docker compose stop
-```
 
+```
+OVPN_DOWNLOAD_ON_START=yes docker compose up -d
+
+docker compose down -v
+```
 
 
 ## Dev

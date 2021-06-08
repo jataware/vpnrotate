@@ -19,7 +19,7 @@ services:
       WUSERNAME: $WINDUSER
       WPASSWORD: $WINDPASS
       LOCAL_NETWORK: 192.168.1.0/24
-      OVPN_DOWNLOAD_ON_START: "no"
+      OVPN_DOWNLOAD_ON_START: ${OVPN_DOWNLOAD_ON_START:-"no"}
     ports:
       - 8118:8118
       - 8080:8080
