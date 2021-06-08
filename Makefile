@@ -71,12 +71,12 @@ docker_login:| check-GITLAB_USER check-GITLAB_PASS  ## Login to docker registery
 	@printf "${GITLAB_PASS}\n" | docker login registry.gitlab.com/jataware -u "${GITLAB_USER}" --password-stdin
 
 .PHONY: docker_push
-docker_push: docker_push_proxy | docker_login  ## push all containers to docker registry
+docker_push: docker_push_vpnproxy  docker_login  ## push all containers to docker registry
 
 .PHONY: docker_push_vpnproxy
 docker_push_vpnproxy:| docker_login ## push proxy container to docker registry
 	@echo "push vpnproxy ${VERSION}"
-	docker push "registry.gitlab.com/jataware/vpnproxy${VERSION}"
+	docker push "registry.gitlab.com/jataware/vpnproxy:${VERSION}"
 
 .PHONY: docker-compose_up
 docker-compose_up:| ip-addr ## Start docker-compose instance local

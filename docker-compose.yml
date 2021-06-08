@@ -12,13 +12,14 @@ services:
     networks:
       - default
     environment:
-      - USERNAME=$NORDUSER
-      - PASSWORD=$NORDPASS
-      - PUSERNAME=$PIAUSER
-      - PPASSWORD=$PIAPASS
-      - WUSERNAME=$WINDUSER
-      - WPASSWORD=$WINDPASS
-      - LOCAL_NETWORK=192.168.1.0/24
+      USERNAME: $NORDUSER
+      PASSWORD: $NORDPASS
+      PUSERNAME: $PIAUSER
+      PPASSWORD: $PIAPASS
+      WUSERNAME: $WINDUSER
+      WPASSWORD: $WINDPASS
+      LOCAL_NETWORK: 192.168.1.0/24
+      OVPN_DOWNLOAD_ON_START: "no"
     ports:
       - 8118:8118
       - 8080:8080

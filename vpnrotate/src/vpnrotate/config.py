@@ -92,6 +92,10 @@ def get_config() -> Any:
 
         options = parser.parse_args()
         settings = load_settings(f"{options.resources}/{options.config}")
+
+        if ovnp_download_on_start := os.getenv("OVPN_DOWNLOAD_ON_START"):
+            settings["vpn_env"]["reload_configs_on_startup"] = yaml.safe_load(ovpn_download_on_start) == True
+
         app_config.check(settings)
         setup_logging(f"{options.resources}/{options.logging}")
         return settings
