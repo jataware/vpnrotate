@@ -16,7 +16,9 @@ async def startup_handler(app: web.Application) -> None:
         await vpnconfigs.run_ovpn_setup(config, clean=True)
 
     app["METRICS"] = metrics.Metrics
-    app["LOCAL_CONNECT"] = await utils.get_ip_info(extended=True)
+    app["LOCAL_CONNECT"] = await utils.get_ip_info(
+        config["vpn_env"]["ip"], extended=True
+    )
     app["PROVIDER"] = {}
 
 

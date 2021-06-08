@@ -3,6 +3,8 @@ app:
   port: 8080
 
 vpn_env:
+  # my ip endpoint
+  ip: https://5jr45codhg.execute-api.us-east-1.amazonaws.com/ip
   # directory of nord ovpn confs
   vpnconfigs: /etc/ovpn/configs
   # download ovpn configs on init

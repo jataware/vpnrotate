@@ -27,9 +27,9 @@ HEADERS = {
 }
 
 
-async def get_ip_info(extended=False):
+async def get_ip_info(ip_url, extended=False):
     async with aiohttp.ClientSession(raise_for_status=True, headers=HEADERS) as session:
-        async with session.get("http://ifconfig.me/ip") as resp:
+        async with session.get(ip_url) as resp:
             ip = await resp.text()
             if not extended:
                 return {"ip": ip}
