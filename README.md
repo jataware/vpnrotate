@@ -14,11 +14,8 @@ export WINDPASS="<pass>"
 # to check environment variables are correct
 env
 
-# To download VPN files
-./ovpn-download-aws.sh
-
 # Build and spin up the container
-./build-docker.sh
+make docker_build
 
 docker-compose up -d
 ```
@@ -46,40 +43,35 @@ python -m pip install -r requirements-dev.txt
 Reformat Code (runs isort, black)
 
 ```
-tox -e format
+make fmt
 ```
 
 
 Test + Lint
 
 ```
-tox
-```
-
-
-Package
-```
-tox -e package
+make tox
 ```
 
 
 ## Docker
 
 ```
-./build-docker.sh
+make docker_build
 ```
 
 
 ## Docker Compose
 
+`OVPN_DOWNLOAD_ON_START=yes` will download configs on start up. If ommited you will have to
+call refresh manually `POST localhost:8080/vpn/configs`
+
+
 ```
-docker-compose up -d --build
+OVPN_DOWNLOAD_ON_START=yes docker compose up -d
 
-
-
-docker-compose stop
+docker compose down -v
 ```
-
 
 
 ## Dev
@@ -88,6 +80,11 @@ docker-compose stop
 python -m pip install -e .
 
 vpnrotate --config=app.dev.yaml --logging=logging.yaml
+```
+
+Download ovpn configs manually to specified config `vpn_env.vpnconfigs` directory
+```
+vpnconfigs --config=app.dev.yaml
 ```
 
 

@@ -45,7 +45,9 @@ app_config = t.Dict(
         ),
         t.Key("vpn_env"): t.Dict(
             {
+                "ip": t.String(),
                 "vpnconfigs": t.String(),
+                "reload_configs_on_startup": t.Bool(),
                 "vpnconfig": t.String(),
             }
         ),
@@ -91,6 +93,12 @@ def get_config() -> Any:
 
         options = parser.parse_args()
         settings = load_settings(f"{options.resources}/{options.config}")
+
+        if ovpn_download_on_start := os.getenv("OVPN_DOWNLOAD_ON_START"):
+            settings["vpn_env"]["reload_configs_on_startup"] = (
+                True if yaml.safe_load(ovpn_download_on_start) is True else False
+            )
+
         app_config.check(settings)
         setup_logging(f"{options.resources}/{options.logging}")
         return settings

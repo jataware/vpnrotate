@@ -1,11 +1,11 @@
 import logging
-import os
 from logging import Logger
+from pathlib import Path
 from time import perf_counter
 
 from aiohttp import web
 
-from . import __version__, svchandler, utils
+from . import __version__, svchandler, utils, vpnconfigs
 
 logger: Logger = logging.getLogger(__name__)
 
@@ -33,7 +33,9 @@ async def vpninfo(request):
     try:
         provider = request.app["PROVIDER"]
         local_connect = request.app["LOCAL_CONNECT"]
-        current_connect = await utils.get_ip_info(extended=False)
+        current_connect = await utils.get_ip_info(
+            request.app["CONFIG"]["vpn_env"]["ip"], extended=False
+        )
         secure = current_connect.get("ip", "") != local_connect.get("ip", "")
 
         return web.json_response(
@@ -62,7 +64,9 @@ async def vpnsecure(request):
     """
     try:
         local_connect = request.app["LOCAL_CONNECT"]
-        current_connect = await utils.get_ip_info()
+        current_connect = await utils.get_ip_info(
+            request.app["CONFIG"]["vpn_env"]["ip"]
+        )
         secure = current_connect.get("ip", "") != local_connect.get("ip", "")
         return web.json_response(secure)
 
@@ -104,14 +108,94 @@ async def restart_vpn(request):
     try:
         body = await request.json()
         vpn_env = request.app["CONFIG"]["vpn_env"]
-        request.app["PROVIDER"] = await svchandler.changeVPNConfig(
+        request.app["PROVIDER"] = await svchandler.change_vpn_config(
             vpn_env["vpnconfigs"], vpn_env["vpnconfig"], body.get("server")
         )
-        await svchandler.restartVPN()
+        await svchandler.restart_vpn()
         return web.Response(text="ok")
 
     except Exception as e:
         logger.exception("restart failed")
+        raise web.HTTPInternalServerError(text=str(e))
+
+
+async def start_vpn(request):
+    """
+    ---
+    summary: Start vpn with current vpn settings
+    tags:
+    - VPN
+    responses:
+        "200":
+            description: ok
+    """
+    try:
+        await svchandler.start_vpn()
+        return web.Response(text="ok")
+
+    except Exception as e:
+        logger.exception("start failed")
+        raise web.HTTPInternalServerError(text=str(e))
+
+
+async def status_vpn(request):
+    """
+    ---
+    summary: returns raw vpn svc status
+    tags:
+    - VPN
+    responses:
+        "200":
+            description: status string
+    """
+    try:
+        success, rc, stdout = await svchandler.status_vpn()
+        if success:
+            return web.Response(text=stdout)
+
+        raise Exception(f"Error checking status: {rc}")
+
+    except Exception as e:
+        logger.exception("status check failed")
+        raise web.HTTPInternalServerError(text=str(e))
+
+
+async def stop_vpn(request):
+    """
+    ---
+    summary: Stop vpn
+    tags:
+    - VPN
+    responses:
+        "200":
+            description: ok
+    """
+    try:
+        await svchandler.stop_vpn()
+        return web.Response(text="ok")
+
+    except Exception as e:
+        logger.exception("stop failed")
+        raise web.HTTPInternalServerError(text=str(e))
+
+
+async def refresh_vpn_configs(request):
+    """
+    ---
+    summary: Refresh vpn configs
+    tags:
+    - VPN
+    responses:
+        "200":
+            description: ok
+    """
+    try:
+        config = request.app["CONFIG"]
+        await vpnconfigs.run_ovpn_setup(config, clean=False)
+        return web.Response(text="ok")
+
+    except Exception as e:
+        logger.exception("stop failed")
         raise web.HTTPInternalServerError(text=str(e))
 
 
@@ -162,24 +246,23 @@ async def vpns(request):
     """
     try:
         vpns = {"nordvpn": [], "pia": [], "wind": []}
-
         vpn_env = request.app["CONFIG"]["vpn_env"]
 
         for vpn in vpns.keys():
-            DIR = f"{vpn_env['vpnconfigs']}/{vpn}/ovpn_tcp/"
-            temp_vpns = []
-            for f in os.listdir(DIR):
+            vpn_config_dir = Path(f"{vpn_env['vpnconfigs']}/{vpn}/ovpn_tcp/")
+            if not vpn_config_dir.exists():
+                continue
+
+            for f in vpn_config_dir.iterdir():
                 try:
                     # Filter out crt/key/pem
-                    if "ovpn" in f:
+                    if f.suffix in [".tcp", ".ovpn"]:
                         if vpn == "nordvpn":
-                            s = f.split(".tcp")
-                            temp_vpns.append(s[0])
+                            s = f.with_suffix("").stem
                         else:
-                            s = f.split(".ovpn")
-                            temp_vpns.append(s[0])
-                        vpns[vpn] = temp_vpns
+                            s = f.stem
 
+                        vpns[vpn].append(s)
                 except Exception:
                     logger.exeception("error parsing filename")
 
@@ -196,9 +279,13 @@ def routing_table(app):
         web.get("/healthcheck", healthcheck, allow_head=False),
         web.get("/metrics", metrics, allow_head=False),
         web.get("/vpns", vpns, allow_head=False),
+        web.get("/vpn/status", status_vpn, allow_head=False),
         web.put("/vpn/restart", restart_vpn),
+        web.delete("/vpn/stop", stop_vpn),
+        web.post("/vpn/start", start_vpn),
         web.get("/vpninfo", vpninfo, allow_head=False),
         web.get("/vpnsecure", vpnsecure, allow_head=False),
+        web.post("/vpn/configs", refresh_vpn_configs),
     ]
 
 

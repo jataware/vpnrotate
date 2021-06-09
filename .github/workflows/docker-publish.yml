@@ -12,9 +12,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Create docker container
-      run: ./build-docker.sh
+      run: make docker_build
     - name: Push docker container
       env:
         GITLAB_PASS: ${{ secrets.GITLAB_PASS }}
         GITLAB_USER: ${{ secrets.GITLAB_USER }}
-      run: ./publish-docker.sh
+      run: make docker_publish prod=y

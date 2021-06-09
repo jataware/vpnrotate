@@ -4,15 +4,21 @@ from logging import Logger
 from aiohttp import web
 from aiohttp_swagger3 import SwaggerDocs, SwaggerUiSettings  # noqa: I201
 
-from . import __version__, config, handler, metrics, utils
+from . import __version__, config, handler, metrics, utils, vpnconfigs
 
 logger: Logger = logging.getLogger(__name__)
 
 
 async def startup_handler(app: web.Application) -> None:
     logger.info("starting up")
+    config = app["CONFIG"]
+    if config["vpn_env"]["reload_configs_on_startup"]:
+        await vpnconfigs.run_ovpn_setup(config, clean=True)
+
     app["METRICS"] = metrics.Metrics
-    app["LOCAL_CONNECT"] = await utils.get_ip_info(extended=True)
+    app["LOCAL_CONNECT"] = await utils.get_ip_info(
+        config["vpn_env"]["ip"], extended=True
+    )
     app["PROVIDER"] = {}
 
 
