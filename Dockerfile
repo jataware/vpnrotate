@@ -1,5 +1,5 @@
 
-FROM python:3.9-buster
+FROM python:3.9-slim-buster
 # See https://nordvpn.com/servers/tools for recommendations
 
 ENV PROTOCOL="tcp" \
