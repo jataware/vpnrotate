@@ -17,4 +17,4 @@ jobs:
       env:
         GITLAB_PASS: ${{ secrets.GITLAB_PASS }}
         GITLAB_USER: ${{ secrets.GITLAB_USER }}
-      run: make docker_publish prod=y
+      run: make docker_push prod=y
