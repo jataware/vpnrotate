@@ -13,3 +13,5 @@ vpn_env:
   vpnconfig: /etc/ovpn/openvpn.conf
 
 
+wind:
+  url: https://vpnrotate.s3.amazonaws.com/20210727_ovpn_tcp.zip

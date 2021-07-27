@@ -51,6 +51,11 @@ app_config = t.Dict(
                 "vpnconfig": t.String(),
             }
         ),
+        t.Key("wind"): t.Dict(
+            {
+                "url": t.String(),
+            }
+        ),
     }
 )
 
