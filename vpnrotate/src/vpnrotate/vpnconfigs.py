@@ -70,13 +70,13 @@ async def configure_pia(vpn_configs_dir):
     unpack_archive(tmpfile, path, "zip")
 
 
-async def configure_wind(vpn_configs_dir):
+async def configure_wind(vpn_configs_dir, settings):
     path = Path(f"{vpn_configs_dir}/wind")
     path.mkdir(parents=True, exist_ok=True)
 
     tmpdir = tempfile.gettempdir()
-    url = "https://vpnrotate.s3.amazonaws.com/ovpn_tcp.zip"
-
+    # url = "https://vpnrotate.s3.amazonaws.com/ovpn_tcp.zip"
+    url = settings["wind"]["url"]
     tmpfile = f"{tmpdir}/wind.zip"
 
     async with aiohttp.ClientSession(raise_for_status=True, headers=HEADERS) as session:
@@ -104,7 +104,7 @@ async def run_ovpn_setup(settings, clean=True):
     await configure_pia(vpn_configs_dir)
 
     logger.info("Setting up Wind OVPN directory")
-    await configure_wind(vpn_configs_dir)
+    await configure_wind(vpn_configs_dir, settings)
 
 
 def main() -> None:

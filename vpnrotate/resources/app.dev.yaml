@@ -11,3 +11,7 @@ vpn_env:
   reload_configs_on_startup: no
   # openvpn conf
   vpnconfig: /etc/ovpn/openvpn.conf
+
+
+wind:
+  url: https://vpnrotate.s3.amazonaws.com/20210727_ovpn_tcp.zip

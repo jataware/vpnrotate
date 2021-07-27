@@ -100,3 +100,17 @@ Example:
 ```
 bump2version --current-version 0.1.6 --new-version 0.1.7 minor --allow-dirty
 ```
+
+
+
+## Windscribe vpn refresh
+
+
+Run the following to create an updated `ovpn_tcp.zip` to replace the
+`https://vpnrotate.s3.amazonaws.com/ovpn_tcp.zip` the current download.
+
+Adding `-c` will download the windscribe credentials as well to `wind-creds.txt`
+
+```
+python -m vpnrotate.wind <user> <password>
+```
