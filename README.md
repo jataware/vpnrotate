@@ -17,7 +17,7 @@ env
 # Build and spin up the container
 make docker_build
 
-docker-compose up -d
+OVPN_DOWNLOAD_ON_START=yes docker-compose up -d
 ```
 Swagger docs http://localhost:8080/api/docs/
 
