@@ -37,7 +37,6 @@ python -m pip install -r requirements-dev.txt
 ```
 
 
-
 ## Tox
 
 Reformat Code (runs isort, black)
