@@ -22,6 +22,15 @@ OVPN_DOWNLOAD_ON_START=yes docker-compose up -d
 Swagger docs http://localhost:8080/api/docs/
 
 
+Configure `SWAGGER_BASE_PATH` to server behind a proxy see [Swagger docs](https://swagger.io/docs/specification/api-host-and-base-path/)
+
+Example
+
+```
+SWAGGER_BASE_PATH=/vpn
+```
+
+
 # Getting Started
 
 Setup a python 3.8+ virtual env

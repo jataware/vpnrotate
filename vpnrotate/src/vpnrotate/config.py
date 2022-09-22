@@ -56,6 +56,7 @@ app_config = t.Dict(
                 "url": t.String(),
             }
         ),
+        t.Key("swagger_base_path"): t.String(),
     }
 )
 
@@ -103,6 +104,8 @@ def get_config() -> Any:
             settings["vpn_env"]["reload_configs_on_startup"] = (
                 True if yaml.safe_load(ovpn_download_on_start) is True else False
             )
+
+        settings["swagger_base_path"] = os.getenv("SWAGGER_BASE_PATH", "/")
 
         app_config.check(settings)
         setup_logging(f"{options.resources}/{options.logging}")

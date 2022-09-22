@@ -3,6 +3,7 @@ from logging import Logger
 
 from aiohttp import web
 from aiohttp_swagger3 import SwaggerDocs, SwaggerUiSettings  # noqa: I201
+from aiohttp_swagger3.routes import _SWAGGER_SPECIFICATION  # noqa: I201
 
 from . import __version__, config, handler, metrics, utils, vpnconfigs
 
@@ -39,6 +40,11 @@ def main() -> None:
         title="vpnrotate",
         version=__version__,
     )
+
+    # HACK - library does not support servers
+    swagger.spec["servers"] = [{"url": settings["swagger_base_path"]}]
+    swagger._app[_SWAGGER_SPECIFICATION] = swagger.spec
+
     config.init_config(app, settings)
     app.on_startup.append(startup_handler)
     app.on_cleanup.append(shutdown_handler)
