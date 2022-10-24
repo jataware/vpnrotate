@@ -251,25 +251,23 @@ async def vpns(request):
         for vpn in vpns.keys():
             vpn_config_dir = Path(f"{vpn_env['vpnconfigs']}/{vpn}/ovpn_tcp/")
             if (
-                not vpn_config_dir.exists()
-                or not Path(
+                vpn_config_dir.exists()
+                and Path(
                     f"{vpn_env['vpnconfigs']}/../{vpn.replace('vpn','')}.conf"
                 ).is_file()
             ):
-                continue
+                for f in vpn_config_dir.iterdir():
+                    try:
+                        # Filter out crt/key/pem
+                        if f.suffix in [".tcp", ".ovpn"]:
+                            if vpn == "nordvpn":
+                                s = f.with_suffix("").stem
+                            else:
+                                s = f.stem
 
-            for f in vpn_config_dir.iterdir():
-                try:
-                    # Filter out crt/key/pem
-                    if f.suffix in [".tcp", ".ovpn"]:
-                        if vpn == "nordvpn":
-                            s = f.with_suffix("").stem
-                        else:
-                            s = f.stem
-
-                        vpns[vpn].append(s)
-                except Exception:
-                    logger.exeception("error parsing filename")
+                            vpns[vpn].append(s)
+                    except Exception:
+                        logger.exeception("error parsing filename")
 
         return web.json_response(vpns)
 
