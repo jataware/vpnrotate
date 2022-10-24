@@ -250,11 +250,7 @@ async def vpns(request):
 
         for vpn in vpns.keys():
             vpn_config_dir = Path(f"{vpn_env['vpnconfigs']}/{vpn}/ovpn_tcp/")
-            if (
-                vpn_config_dir.exists() and Path(
-                    f"{vpn_env['vpnconfigs']}/../{vpn.replace('vpn','')}.conf"
-                ).is_file()
-            ):
+            if vpn_config_dir.exists() and Path(f"{vpn_env['vpnconfigs']}/../{vpn.replace('vpn','')}.conf").is_file():
                 for f in vpn_config_dir.iterdir():
                     try:
                         # Filter out crt/key/pem
