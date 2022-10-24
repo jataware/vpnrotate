@@ -250,7 +250,12 @@ async def vpns(request):
 
         for vpn in vpns.keys():
             vpn_config_dir = Path(f"{vpn_env['vpnconfigs']}/{vpn}/ovpn_tcp/")
-            if not vpn_config_dir.exists():
+            if (
+                not vpn_config_dir.exists()
+                or not Path(
+                    f"{vpn_env['vpnconfigs']}/../{vpn.replace('vpn','')}.conf"
+                ).is_file()
+            ):
                 continue
 
             for f in vpn_config_dir.iterdir():
