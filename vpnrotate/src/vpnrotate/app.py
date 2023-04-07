@@ -31,7 +31,7 @@ async def shutdown_handler(app: web.Application) -> None:
 def main() -> None:
     settings = config.get_config()
     app = web.Application(
-        client_max_size=5 * 1024 ** 2,
+        client_max_size=5 * 1024**2,
         middlewares=[handler.response_time, handler.request_counter],
     )
     swagger = SwaggerDocs(

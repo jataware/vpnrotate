@@ -42,7 +42,6 @@ async def getsave(session, outfile, url):
 
 
 async def configure_nord(vpn_configs_dir):
-
     path = Path(f"{vpn_configs_dir}/nordvpn")
     path.mkdir(parents=True, exist_ok=True)
 
@@ -86,7 +85,6 @@ async def configure_wind(vpn_configs_dir, settings):
 
 
 async def run_ovpn_setup(settings, clean=True):
-
     vpn_configs_dir = settings["vpn_env"]["vpnconfigs"]
     logger.debug(f"vpn_configs_dir = {vpn_configs_dir}")
 

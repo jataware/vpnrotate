@@ -47,6 +47,10 @@ else
 	$(eval IP_ADDRESS=$(shell hostname -i))
 endif
 
+.PHONY: print-version
+print-version:
+	@echo "Version: ${VERSION}"
+
 
 .PHONY: docker_build
 docker_build: docker_build_vpnproxy ## Build all docker containers
@@ -81,3 +85,19 @@ docker_push_vpnproxy:| docker_login ## push proxy container to docker registry
 .PHONY: docker-compose_up
 docker-compose_up:| ip-addr ## Start docker-compose instance local
 	docker-compose up -d
+
+
+.PHONY: docker_login-dockerhub
+docker_login-dockerhub:| check-DOCKERHUB_USER check-DOCKERHUB_TOKEN  ## Login to docker registery. Requires DOCKERHUB_USER and DOCKERHUB_TOKEN to be set in the environment
+	@printf "${DOCKERHUB_TOKEN}\n" | docker login -u "${DOCKERHUB_USER}" --password-stdin
+
+
+.PHONY: docker_push-dockerhub
+docker_push-dockerhub:| docker_login-dockerhub  ## Pushes docker image to docker hub
+	@echo "push ${VERSION} "
+	docker push "jataware/vpnrotate:${VERSION}"
+	docker push "jataware/vpnrotate:latest"
+
+.PHONY: draft-release
+draft-release:
+	gh release create "v${VERSION}" --generate-notes -d

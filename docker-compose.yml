@@ -1,7 +1,7 @@
-version: '3'
+version: "3"
 services:
   vpnproxy:
-    image: jataware/vpnproxy:dev
+    image: jataware/vpnrotate:latest
     cap_add:
       - NET_ADMIN
     devices:

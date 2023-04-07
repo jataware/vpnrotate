@@ -31,7 +31,6 @@ async def file_copy(src: str, dest: str, buff_size: int = 4096):
 
 
 async def change_vpn_config(vpnconfigs: str, vpnconf: str, server: str) -> dict:
-
     provider = {}
 
     # NordVPN
