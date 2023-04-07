@@ -6,8 +6,6 @@ import sys
 from typing import Any, Final, List, Optional
 
 import trafaret as t
-
-# flake and black fight over this order
 import yaml  # noqa: I201, I100
 from aiohttp import web  # noqa: I201, I100
 
@@ -17,7 +15,6 @@ ENV_LOG_CONFIG: Final = "LOG_CONFIG"
 def setup_logging(
     default_path="logging.yaml", default_level=logging.INFO, env_key=ENV_LOG_CONFIG
 ):
-
     path = default_path
     value = os.getenv(env_key, None)
     if value:
