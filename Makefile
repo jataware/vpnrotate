@@ -10,7 +10,7 @@
 # osx: brew install pyenv pyenv-virtualenv
 
 
-VERSION := 0.2.4
+VERSION := 0.3.0
 
 DEV ?= $(strip $(if $(findstring y,$(prod)),,dev))
 
