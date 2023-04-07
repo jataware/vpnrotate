@@ -1,4 +1,6 @@
+# What is this?
 
+The number of IP addresses you can egress from reliably is often the limiting factor in data scraping and other online activities.  This project allows you to use your NordVPN, Windscribe, and/or Private Internet Access credentials to allow programmatic control of a proxy egress point via a set of useful APIs.
 
 
 # Quick Start
