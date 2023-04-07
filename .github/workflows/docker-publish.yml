@@ -1,20 +1,29 @@
 name: Docker Publish Version
 
 on:
-  push:
-    branches:
-      - master
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+
     - name: Create docker container
       run: make docker_build
+
     - name: Push docker container
       env:
         GITLAB_PASS: ${{ secrets.GITLAB_PASS }}
         GITLAB_USER: ${{ secrets.GITLAB_USER }}
       run: make docker_push prod=y
+
+    - name: Push dockerhub container
+      env:
+         DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+         DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      run: make docker_push-dockerhub prod=y

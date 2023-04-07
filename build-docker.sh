@@ -16,4 +16,7 @@ docker build \
        -t "${NAME}:${VERSION}" \
        -t "registry.gitlab.com/${IMAGE}:${VERSION}" \
        -t "registry.gitlab.com/${IMAGE}:${VERSION}-dev" \
+       -t "jataware/vpnrotate:${VERSION}-dev" \
+       -t "jataware/vpnrotate:${VERSION}" \
+       -t "jataware/vpnrotate:latest" \
        .
