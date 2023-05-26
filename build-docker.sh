@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 DT=$(date +"%Y%m%d")
-GIT=${DT}.git.$(git rev-parse --short HEAD)
+GIT=${DT}.git.$(git rev-parse --short HEAD 2>/dev/null || echo "norev")
 
 VERSION="0.3.1"
 
